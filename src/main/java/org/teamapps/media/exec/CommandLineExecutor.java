@@ -24,11 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 
 public class CommandLineExecutor {
 
@@ -143,19 +145,64 @@ public class CommandLineExecutor {
 		}
 	}
 
-	private void readLogs(final InputStream is, StringBuilder sb) {
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-					String line;
-					while ((line = reader.readLine()) != null) {
-						sb.append(line).append("\n");
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+	public CompletableFuture<File> executeCommandAsync(String commandArgs, File expectedResultFile, boolean expectFileWithContent, int maxRuntimeInSeconds, Executor executor) {
+		StringBuilder logsBuilder = new StringBuilder();
+		StringBuilder errorLogsBuilder = new StringBuilder();
+		Function<Void, File> resultFileFunction = aVoid -> {
+			if (!expectedResultFile.exists() || (expectFileWithContent && expectedResultFile.length() == 0)) {
+				throw new RuntimeException("Error: missing result file with executable args:" + commandArgs + "\n" + logsBuilder.toString() + errorLogsBuilder.toString());
+			}
+			return expectedResultFile;
+		};
+		Runnable runnable = createExecutionRunnable(commandArgs, maxRuntimeInSeconds, logsBuilder, errorLogsBuilder);
+		return executor != null ? CompletableFuture.runAsync(runnable, executor).thenApply(resultFileFunction) : CompletableFuture.runAsync(runnable).thenApply(resultFileFunction);
+	}
+
+	public CompletableFuture<File> executeCommandAsync(String commandArgs, File path, String partOfResultFileName, boolean expectFileWithContent, int maxRuntimeInSeconds, Executor executor) {
+		StringBuilder logsBuilder = new StringBuilder();
+		StringBuilder errorLogsBuilder = new StringBuilder();
+		Function<Void, File> resultFileFunction = aVoid -> {
+			File expectedResultFile = Arrays.stream(path.listFiles())
+					.filter(file -> file.getName().contains(partOfResultFileName))
+					.findAny()
+					.orElse(null);
+			if (expectedResultFile == null || !expectedResultFile.exists() || (expectFileWithContent && expectedResultFile.length() == 0)) {
+				throw new RuntimeException("Error: missing result file with executable args:" + commandArgs + "\n" + logsBuilder.toString() + errorLogsBuilder.toString());
+			}
+			return expectedResultFile;
+		};
+		Runnable runnable = createExecutionRunnable(commandArgs, maxRuntimeInSeconds, logsBuilder, errorLogsBuilder);
+		return executor != null ? CompletableFuture.runAsync(runnable, executor).thenApply(resultFileFunction) : CompletableFuture.runAsync(runnable).thenApply(resultFileFunction);
+	}
+
+	private Runnable createExecutionRunnable(String commandArgs, int maxRuntimeInSeconds, StringBuilder logsBuilder, StringBuilder errorLogsBuilder) {
+		return () -> {
+			try {
+				String command = binaryPath + " " + commandArgs;
+				Process process = Runtime.getRuntime().exec(command);
+				readLogs(process.getInputStream(), logsBuilder);
+				readLogs(process.getErrorStream(), errorLogsBuilder);
+				if (!process.waitFor(maxRuntimeInSeconds, TimeUnit.SECONDS)) {
+					process.destroy();
+					process.destroyForcibly();
+					throw new TimeoutException(errorLogsBuilder.toString());
 				}
+			} catch (Exception e) {
+				throw new RuntimeException(errorLogsBuilder.toString(), e);
+			}
+		};
+	}
+
+	private void readLogs(final InputStream is, StringBuilder sb) {
+		Thread thread = new Thread(() -> {
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					sb.append(line).append("\n");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		});
 		thread.setDaemon(true);

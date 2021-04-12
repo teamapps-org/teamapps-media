@@ -61,14 +61,13 @@ public class VideoConverter {
 		}
 	}
 
-	public CompletableFuture<File> createVideoThumbnail(File inputFile, int minutes, int seconds, boolean showLogs, int timeoutSeconds) {
+	public CompletableFuture<File> createVideoThumbnail(File inputFile, int minutes, int seconds, int timeoutSeconds) {
 		try {
 			File outputFile = File.createTempFile("video-thumbnail-", ".jpg");
 			String args = "-ss 00:" + formatTimeValue(minutes) + ":" + formatTimeValue(seconds) + " "
 					+ "-i " + inputFile.getPath() + " "
 					+ "-vframes 1 " + outputFile.getPath() + " "
-					+ "-hide_banner "
-					+ outputFile;
+					+ "-hide_banner ";
 			return commandLineExecutor.executeCommandAsync(args, timeoutSeconds, executor)
 					.thenApply(aVoid -> outputFile);
 		} catch (Exception e) {
