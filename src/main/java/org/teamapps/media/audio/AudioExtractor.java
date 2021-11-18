@@ -25,10 +25,13 @@ import org.teamapps.media.exec.ExternalResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class AudioExtractor {
 
@@ -146,6 +149,20 @@ public class AudioExtractor {
 			commandLineExecutor.executeCommand(args, timeoutSeconds, showLogs);
 			return outFile;
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public File concatSameFormatMediaFiles(List<File> inputFiles, File outputFile, int timeoutSeconds, boolean showLogs) {
+		try {
+			File concatFile = Files.createTempFile("temp-concat-list", ".txt").toFile();
+			byte[] concatData = inputFiles.stream().map(f -> "file '" + f.getPath() + "'").collect(Collectors.joining("\n")).getBytes(StandardCharsets.UTF_8);
+			Files.write(concatFile.toPath(), concatData);
+			String args = "-safe 0 -f concat -i " + concatFile.getPath() + " -c copy " + outputFile.getPath();
+			commandLineExecutor.executeCommand(args, timeoutSeconds, showLogs);
+			return outputFile;
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
