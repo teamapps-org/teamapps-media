@@ -26,6 +26,7 @@ import org.teamapps.media.exec.CommandLineExecutor;
 import org.teamapps.media.exec.ExternalResource;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -63,9 +64,12 @@ public class VideoConverter {
 
 	public CompletableFuture<File> createVideoThumbnail(File inputFile, int minutes, int seconds, int timeoutSeconds) {
 		try {
-			File outputFile = File.createTempFile("video-thumbnail-", ".jpg");
+			File temp = Files.createTempDirectory("temp").toFile();
+			File newInput = new File(temp, "video-copy" + System.currentTimeMillis() + ".mp4");
+			Files.copy(inputFile.toPath(), newInput.toPath());
+			File outputFile = new File(temp, "video" + System.currentTimeMillis() + ".jpg");
 			String args = "-ss 00:" + formatTimeValue(minutes) + ":" + formatTimeValue(seconds) + " "
-					+ "-i " + inputFile.getPath() + " "
+					+ "-i " + newInput.getPath() + " "
 					+ "-vframes 1 " + outputFile.getPath() + " "
 					+ "-hide_banner ";
 			return commandLineExecutor.executeCommandAsync(args, timeoutSeconds, executor)
