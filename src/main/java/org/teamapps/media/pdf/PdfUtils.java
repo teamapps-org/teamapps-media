@@ -29,7 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.fdf.FDFDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -56,7 +59,7 @@ public class PdfUtils {
 
 	public static byte[] createPdfThumbnail(File pdfFile, int resolution) {
 		try {
-			PDDocument document = PDDocument.load(pdfFile);
+			PDDocument document = Loader.loadPDF(pdfFile);
 			PDFRenderer pdfRenderer = new PDFRenderer(document);
 			BufferedImage image = pdfRenderer.renderImageWithDPI(0, resolution, ImageType.RGB);
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -72,7 +75,7 @@ public class PdfUtils {
 	public List<File> createPdfBoxPages(File pdfFile, int maxFiles, int resolution, int jpegQuality, int maxPngSize) throws Exception {
 		long time = System.currentTimeMillis();
 		List<File> pageFiles = new ArrayList<>();
-		PDDocument document = PDDocument.load(pdfFile);
+		PDDocument document = Loader.loadPDF(pdfFile);
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		int numberOfPages = document.getNumberOfPages();
 		int max = Math.min(maxFiles, numberOfPages);
@@ -97,7 +100,7 @@ public class PdfUtils {
 
 	public static int getPdfPageCount(File pdfFile) {
 		try {
-			PDDocument document = PDDocument.load(pdfFile);
+			PDDocument document = Loader.loadPDF(pdfFile);
 			//more infos with: PDDocumentInformation info = document.getDocumentInformation();
 			int pages = document.getNumberOfPages();
 			document.close();
