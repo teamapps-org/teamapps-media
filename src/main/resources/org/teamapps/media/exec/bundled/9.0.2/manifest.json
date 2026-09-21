@@ -1,0 +1,72 @@
+{
+  "version": "9.0.2",
+  "legacyResourcesUnchanged": true,
+  "platforms": {
+    "macos-arm64": {
+      "ffmpeg": {
+        "url": "https://ffmpeg.martin-riedl.de/download/macos/arm64/1789931890_9.0.2/ffmpeg.zip",
+        "archiveSha256": "c8ed4c4e6978a03c485edbfe4e0a5dc2380f8a30bba5150531b31b094492d924",
+        "binarySha256": "2e11c6f90993cdb79fff84d3f90044d28316b310e75b3e030cfc9a54f2c9d384",
+        "bytes": 66332880
+      },
+      "ffprobe": {
+        "url": "https://ffmpeg.martin-riedl.de/download/macos/arm64/1789931890_9.0.2/ffprobe.zip",
+        "archiveSha256": "fcbe839537485eaee7a7a8bc5cbc0f90d53617e80943e8a5b2e31cb851197ea6",
+        "binarySha256": "2738aa46a7f9acbc8ab09a6715554c90f7de603171ac403726765685df6a0059",
+        "bytes": 66158064
+      },
+      "requirements": "macOS >= 12.0; system frameworks only",
+      "source": "https://git.martin-riedl.de/ffmpeg/build-script"
+    },
+    "macos-amd64": {
+      "ffmpeg": {
+        "url": "https://ffmpeg.martin-riedl.de/download/macos/amd64/1789931006_9.0.2/ffmpeg.zip",
+        "archiveSha256": "7c6b4125b191cbf773832dc51f424cf2b6bb7da43007d1e066f95909e47cacd4",
+        "binarySha256": "b25689cf2211c0582d317e849912769a1f1c93904fe102c485b5364a425633d1",
+        "bytes": 94769296
+      },
+      "ffprobe": {
+        "url": "https://ffmpeg.martin-riedl.de/download/macos/amd64/1789931006_9.0.2/ffprobe.zip",
+        "archiveSha256": "2322438ed2f6319a691291b247d09c69dcaa3a982460d1f269a7e1af335cfdfd",
+        "binarySha256": "b5df9964b0c2048318fafedcd4e3bbafbc561033cee77de8da1840685d8a9d0d",
+        "bytes": 94594080
+      },
+      "requirements": "macOS >= 12.0; system frameworks only",
+      "source": "https://git.martin-riedl.de/ffmpeg/build-script"
+    },
+    "linux-amd64": {
+      "ffmpeg": {
+        "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-09-20-13-11/ffmpeg-n9.0.2-3-ga5923073bf-linux64-gpl-9.0.tar.xz",
+        "archiveSha256": "7569c7c00a421d4fb4636925a126e96e051bb5cdd0b0e0a91576ddfadddd9bff",
+        "binarySha256": "34336eeef07ca088a34cbbe598eefe0001602afcef6be6bd63992c5f7e198c96",
+        "bytes": 171561896
+      },
+      "ffprobe": {
+        "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-09-20-13-11/ffmpeg-n9.0.2-3-ga5923073bf-linux64-gpl-9.0.tar.xz",
+        "archiveSha256": "7569c7c00a421d4fb4636925a126e96e051bb5cdd0b0e0a91576ddfadddd9bff",
+        "binarySha256": "19e35031177a890af700e1580ca16c22b52733bfe1a81a1be7790335d523d122",
+        "bytes": 171332456
+      },
+      "requirements": "Linux >= 4.18, glibc >= 2.28",
+      "source": "https://github.com/BtbN/FFmpeg-Builds/tree/autobuild-2026-09-20-13-11"
+    },
+    "linux-arm64": {
+      "ffmpeg": {
+        "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-09-20-13-11/ffmpeg-n9.0.2-3-ga5923073bf-linuxarm64-gpl-9.0.tar.xz",
+        "archiveSha256": "031d4336d6a9fab8c0bc26c3bca4fab0c09fcfdd405a7ef6ce2aa4b535fddce9",
+        "binarySha256": "54d5bb6430e76adc0d9eabf433fdfc2127ab1d879e7724fdfdaebde5ac5e0407",
+        "bytes": 130405776
+      },
+      "ffprobe": {
+        "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-09-20-13-11/ffmpeg-n9.0.2-3-ga5923073bf-linuxarm64-gpl-9.0.tar.xz",
+        "archiveSha256": "031d4336d6a9fab8c0bc26c3bca4fab0c09fcfdd405a7ef6ce2aa4b535fddce9",
+        "binarySha256": "1ba9a8ccf723ac0cc820f1580016e932b56e2ce7227299444357e80e3b141c36",
+        "bytes": 130209168
+      },
+      "requirements": "Linux >= 4.18, glibc >= 2.28",
+      "source": "https://github.com/BtbN/FFmpeg-Builds/tree/autobuild-2026-09-20-13-11"
+    }
+  },
+  "ffmpegSource": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+  "license": "GPL-3.0-or-later; see GPL-3.0.txt and the corresponding distributor build scripts for linked libraries"
+}
